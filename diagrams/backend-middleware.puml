@@ -1,8 +1,8 @@
 @startuml
 start
 
-:Read **xing_csrf_token** cookie;
-:Read **xing_csrf_checksum** cookie;
+:Read **csrf_token** cookie;
+:Read **csrf_checksum** cookie;
 :Validate the token against the checksum;
 
 if (Token is valid?) then (yes)

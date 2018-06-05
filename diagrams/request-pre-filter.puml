@@ -1,7 +1,7 @@
 @startuml
 start
 
-:Read the **token** from **xing_csrf_token** cookie;
+:Read the **token** from **csrf_token** cookie;
 
 if (**token** is defined?) then (yes)
     :Set **X-CSRF-Token** header for the request with **token** as a value;

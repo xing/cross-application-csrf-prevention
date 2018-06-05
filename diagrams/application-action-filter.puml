@@ -8,7 +8,7 @@ else (no)
     :Read the **token** from the **X-CSRF-Token** header;
 endif
 
-:Read the **checksum** from the **xing_csrf_checksum** cookie;
+:Read the **checksum** from the **csrf_checksum** cookie;
 :Validate the **token** against the **checksum**;
 
 if (**token** is valid?) then (yes)
