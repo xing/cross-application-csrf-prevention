@@ -424,8 +424,8 @@ the narrow time window. The belated request must arrive exactly between reading 
 and sending the request, and since the token should be read from the cookies right before
 sending the request, it is unlikely to happen.
 
-In order to fully mitigate this race condition, the application should generate the token
-+ checksum pair in advance for every page containing several dynamic components that
+In order to fully mitigate this race condition, the application should generate the
+token/checksum pair in advance for every page containing several dynamic components that
 demand anti-CSRF protection.
 
 [XING]: https://www.xing.com
