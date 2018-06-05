@@ -1,0 +1,40 @@
+@startuml
+participant Browser
+participant "Backend A"
+participant "Backend B"
+participant "Backend C"
+
+activate Browser
+
+Browser -> "Backend A": GET /page
+activate "Backend A"
+"Backend A" --> Browser: Page
+deactivate "Backend A"
+
+Browser -> "Backend B": GET /app-b/dynamic-component-x
+activate "Backend B"
+
+Browser -> "Backend C": GET /app-c/dynamic-component-y
+activate "Backend C"
+
+
+group Race condition
+    "Backend B" --> Browser: Set-Cookie: token=<back:green><color:white>BBB</color></back>
+
+    "Backend C" --> Browser: Set-Cookie: token=<back:blue><color:white>CCC</color></back>
+
+    "Backend C" --> Browser: Set-Cookie: checksum=<back:blue><color:white>YYY</color></back>
+
+    "Backend B" --> Browser: Set-Cookie: checksum=<back:green><color:white>XXX</color></back>
+end
+
+"Backend C" --> Browser: Dynamic component Y
+deactivate "Backend C"
+
+
+"Backend B" --> Browser: Dynamic component X
+deactivate "Backend B"
+
+
+deactivate Browser
+@enduml

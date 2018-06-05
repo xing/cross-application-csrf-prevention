@@ -1,0 +1,59 @@
+@startuml
+actor User
+participant Frontend
+participant Browser
+participant "Backend A"
+participant "Backend B"
+participant "Backend C"
+
+User -> Browser: Open /page
+activate Browser
+
+Browser -> "Backend A": GET /page
+activate "Backend A"
+"Backend A" --> Browser: Page
+deactivate "Backend A"
+Browser --> Frontend: Render
+Frontend --> User: Ready
+
+activate Frontend
+Frontend ->> Browser: Load Dynamic Component X
+Browser -> "Backend B": GET /app-b/dynamic-component-x
+activate "Backend B"
+
+Frontend ->> Browser: Load Dynamic Component Y
+Browser -> "Backend C": GET /app-c/dynamic-component-y
+activate "Backend C"
+
+"Backend B" --> Browser: Dynamic Component X\nSet cookie token=<back:green><color:white>BBB</color></back>\nSet cookie checksum=<back:green><color:white>XXX</color></back>
+deactivate "Backend B"
+
+Browser --> Frontend: Render Dynamic Component X
+Frontend -->> User: Component X ready
+
+User ->> Frontend: Fill in Component X data
+User ->> Frontend: Save Component X
+
+group Race condition
+
+Frontend -> Browser: Load the token cookie
+Browser --> Frontend: Token=<back:green><color:white>BBB</color></back>
+Frontend -> Frontend: Set request header: token=<back:green><color:white>BBB</color></back>
+
+"Backend C" --> Browser: Dynamic Component Y\nSet cookie token=<back:blue><color:white>CCC</color></back>\nSet cookie checksum=<back:blue><color:white>YYY</color></back>
+deactivate "Backend C"
+Browser --> Frontend: Render Dynamic Component Y
+
+Frontend -> Browser: Request saving Dynamic Component X
+Browser -> "Backend B": POST /app-b/dynamic-component-x\nSet header token=<back:green><color:white>BBB</color></back>\nSet cookie checksum=<back:blue><color:white>YYY</color></back>
+activate "Backend B"
+"Backend B" --> Browser: 400 Bad Request
+deactivate "Backend B"
+end
+
+Browser --> Frontend: Saving Dynamic Component X failed
+Frontend -->> User: Saving Component X failed
+
+deactivate Browser
+deactivate Frontend
+@enduml

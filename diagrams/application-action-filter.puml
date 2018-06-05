@@ -1,0 +1,21 @@
+@startuml
+start
+
+:Read the **token** from the **authenticity_token** form parameter;
+
+if (**token** is defined?) then (yes)
+else (no)
+    :Read the **token** from the **X-CSRF-Token** header;
+endif
+
+:Read the **checksum** from the **xing_csrf_checksum** cookie;
+:Validate the **token** against the **checksum**;
+
+if (**token** is valid?) then (yes)
+    :Execute the request;
+else (no)
+    :Respond with backend error (400 Bad Request);
+endif
+
+stop
+@enduml

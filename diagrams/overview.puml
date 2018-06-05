@@ -1,0 +1,63 @@
+@startuml
+actor User
+participant Frontend
+participant Browser
+participant Backend
+
+User -> Browser: Open /page
+activate Browser
+
+Browser -> Backend: GET /page
+activate Backend
+
+Backend -> Backend: Set token and checksum cookies
+
+Backend --> Browser: 200 OK
+deactivate Backend
+
+Browser ->> Browser: Store token and checksum cookies
+
+Browser --> Frontend: Render
+deactivate Browser
+
+activate Frontend
+
+Frontend --> User: Ready
+
+
+User -> Frontend: Fill in form data
+
+User -> Frontend: Save the form
+
+Frontend -> Browser: Get token cookie
+activate Browser
+Browser -> Frontend: Token
+deactivate Browser
+Frontend -> Frontend: Set the token header
+
+Frontend -> Browser: Send the request
+activate Browser
+Browser -> Backend: POST /save_form
+
+activate Backend
+Backend -> Backend: Read the token header
+Backend -> Backend: Read the checksum cookie
+Backend -> Backend: Validate the token against checksum
+
+alt Valid token
+    Backend --> Browser: 204 No Content
+    Browser --> Frontend: Success
+    Frontend -> Frontend: Render success
+else Invalid token
+    Backend -> Backend: Generate new token
+    Backend -> Backend: Set token and checksum cookies
+    Backend --> Browser: 400 Bad Request
+    deactivate Backend
+    Browser --> Frontend: Error
+    deactivate Browser
+    Frontend -> Frontend: Render error
+end
+
+Frontend --> User: Done
+deactivate Frontend
+@enduml

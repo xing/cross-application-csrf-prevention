@@ -1,0 +1,32 @@
+@startuml
+start
+
+:Read **xing_csrf_token** cookie;
+:Read **xing_csrf_checksum** cookie;
+:Validate the token against the checksum;
+
+if (Token is valid?) then (yes)
+    :Save the existing token in the **token** variable;
+    :Set **new_token_generated** variable to **false**;
+else (no)
+    :Generate new token;
+    :Save the new token in the **token** variable;
+    :Set **new_token_generated** variable to **true**;
+endif
+
+:Call the application with **token** variable;
+:Save the application **response**;
+
+if ("new_token_generated" flag is set to "true"?) then (yes)
+    :Compute the token checksum;
+    :Append the **token** cookie to the **response**;
+    :Append the **checksum** cookie to the **response**;
+    :Log the generated **token**;
+else (no)
+endif
+
+
+:Return **response**;
+
+stop
+@enduml
